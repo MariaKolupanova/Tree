@@ -23,7 +23,6 @@ struct Coord
 
 struct Vertex
 {
-    Coord Coordinate;
     Coord CameFrom = {INF,INF};
     double Weight = INF;
     bool IsVisited = false;

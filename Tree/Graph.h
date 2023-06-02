@@ -14,13 +14,15 @@
 
 class Graph{
     public:
-        Graph(unsigned int n,  unsigned int m);
+        Graph(unsigned int n,  unsigned int m, int move_step, unsigned int road_len);
         std::vector<Coord> find_path_Dijkstra(Coord startPoint, Coord goalPoint);
     private:
         // Количество вершин по оси Ox
         unsigned int N;
         // Количество вершин по оси Oy
         unsigned int M;
+        int Move_Step;
+        Coord change_coord = {0,0};
         // Набор всех клеток
         Vertex **Vertices;
         void Create_Grid();

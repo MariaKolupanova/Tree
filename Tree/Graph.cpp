@@ -7,10 +7,12 @@
 
 #include "Graph.h"
 #include <stack>
-Graph::Graph(const unsigned int n,const unsigned int m)
+Graph::Graph(const unsigned int n,const unsigned int m,int move_step,unsigned int road_len)
 {
-    N = n;
+    N = n - road_len;
     M = m;
+    Move_Step = move_step;
+//    Road_Len = road_len;
     Create_Grid();
     Fill_Grid();
     
@@ -73,6 +75,13 @@ std::vector<Coord> Graph::find_path_Dijkstra(Coord startPoint, Coord goalPoint)
             continue;
         }
         Vertices[current_coord.x][current_coord.y].IsVisited = true;
+        
+        if(change_coord.y!= 0) change_coord.y += 1;
+        if(Vertices[current_coord.x][current_coord.y].CameFrom.x != current_coord.x && (change_coord.y == 0)){
+            change_coord.y += 1;
+            change_coord.x = current_coord.x - Vertices[current_coord.x][current_coord.y].CameFrom.x;
+        }
+        if(change_coord.y > 5) change_coord = {0,0};
         std::vector<Coord> neighbors = GetValidNeighbors({current_coord});
         for (auto neighbor : neighbors)
         {
@@ -84,7 +93,7 @@ std::vector<Coord> Graph::find_path_Dijkstra(Coord startPoint, Coord goalPoint)
                 {
                     Vertices[neighbor.x][neighbor.y].Label = next_label;
                     Vertices[neighbor.x][neighbor.y].CameFrom = current_coord;
-                    min_weigth_map.insert({next_label, neighbor });
+                    min_weigth_map.insert({next_label, neighbor});
                 }
             }
         }
@@ -94,17 +103,26 @@ std::vector<Coord> Graph::find_path_Dijkstra(Coord startPoint, Coord goalPoint)
 
 std::vector<Coord> Graph::GetAllAdjacentVertices(Coord v)
 {
-        return
-        {
-            {v.x, v.y + 1},
-            {v.x, v.y - 1},
-            {v.x + 1, v.y },
-            {v.x - 1, v.y},
-            {v.x + 1, v.y + 1},
-            {v.x + 1, v.y - 1},
-            {v.x - 1, v.y + 1},
-            {v.x - 1, v.y - 1}
-        };
+    std::vector<Coord> coord_movement;
+    if(change_coord.y != 0 ){
+        for(int i = 0; i <=1; i++){
+                for(int j = 0; j <= Move_Step; j++ ){
+                    if(change_coord.x > 0) coord_movement.push_back({v.x + j, v.y + i});
+                    if(change_coord.x < 0) coord_movement.push_back({v.x - j, v.y + i});
+                }
+        }
+    }
+    else{
+        for(int i = -1; i <=1; i++){
+                for(int j = -Move_Step; j <= Move_Step; j++ ){
+                    coord_movement.push_back({v.x + j, v.y + i});
+            }
+        }
+    }
+
+
+    return coord_movement;
+
 }
 
 
